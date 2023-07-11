@@ -22,46 +22,16 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 const router=express.Router()
-const {
-        register,
-        login,
-        addLogo,
-        editLogo,
-        deleteLogo,
-        getLogo
-      
-  } = require('../controllers/user');
+const { register, login, addLogo, editLogo, deleteLogo, getLogo } = require('../controllers/user');
+const { addHolidayEvent, updateHolidayEvent, deleteHolidayEvent, getHomePageHeroContent } = require('../controllers/holiday&events');
+const { addSocialMediaLink, getSocialMediaLinks, updateSocialMediaLink, deleteSocialMediaLink } = require('../controllers/socialmedia');
+const { addService, updateService, deleteService, getServices, getServiceWithStrategicExecutions  } = require('../controllers/servicess');
+const { addStrategicExecution, updateStrategicExecution, deleteStrategicExecution, getStrategicExecution } = require('../controllers/strategicExecution');
+const { addTechnology, updateTechnology, deleteTechnology, getTechnologies} = require('../controllers/technologies');
+const { addTestimonial, updateTestimonial, deleteTestimonial, getTestimonials} = require('../controllers/testimonials');
+const { addContact, updateContact, deleteContact, getContact} = require('../controllers/contact');
+const { addPortfolioProject, updatePortfolioProject, deletePortfolioProject, getPortfolioProjects, getSinglePortfolioProject} = require('../controllers/portprojects');
 
-  const {
-    addHolidayEvent,
-    updateHolidayEvent,
-    deleteHolidayEvent,
-    getHomePageHeroContent
-  } = require('../controllers/holiday&events');
-
-
-  const {
-    addSocialMediaLink,
-    getSocialMediaLinks,
-    updateSocialMediaLink,
-    deleteSocialMediaLink
-  } = require('../controllers/socialmedia');
-
-
-  const {
-    addService,
-    updateService,
-    deleteService,
-    getServices,
-    getServiceWithStrategicExecutions
-  } = require('../controllers/servicess');
-
-  const {
-    addStrategicExecution,
-    updateStrategicExecution,
-    deleteStrategicExecution,
-    getStrategicExecution
-  } = require('../controllers/strategicExecution');
 
   // Add a Login
   router.post('/register', register);
@@ -83,10 +53,10 @@ const {
 
 
   // Add a social media link
-    router.post('/social-media',upload.single('image'),addSocialMediaLink);
-    router.put('/social-media/:socialMediaLinkId',upload.single('image'), updateSocialMediaLink);
-    router.delete('/social-media/:socialMediaLinkId',deleteSocialMediaLink);
-    router.get('/social-media', getSocialMediaLinks);
+  router.post('/social-media',upload.single('image'),addSocialMediaLink);
+  router.put('/social-media/:socialMediaLinkId',upload.single('image'), updateSocialMediaLink);
+  router.delete('/social-media/:socialMediaLinkId',deleteSocialMediaLink);
+  router.get('/social-media', getSocialMediaLinks);
 
 
   //Services Routes
@@ -96,12 +66,35 @@ const {
   router.get('/services', getServices);
   router.get('/services/:serviceId', getServiceWithStrategicExecutions);
 
-
-
   // Strategic Executions Routes
-  router.post('/strategic-executions', upload.single('image'), addStrategicExecution);
-  router.put('/strategic-executions/:strategicExecutionId', upload.single('image'), updateStrategicExecution);
+  router.post('/strategic-executions', upload.single('stratImage'), addStrategicExecution);
+  router.put('/strategic-executions/:strategicExecutionId', upload.single('stratImage'), updateStrategicExecution);
   router.delete('/strategic-executions/:strategicExecutionId', deleteStrategicExecution);
   router.get('/strategic-executions', getStrategicExecution);
+
+  // Add a new technology
+  router.post('/technology', upload.single('image'), addTechnology);
+  router.put('/technology/:technologyId', upload.single('image'), updateTechnology);
+  router.delete('/technology/:technologyId', deleteTechnology);
+  router.get('/technologies', getTechnologies);
+
+  // Add a new portfolio project
+  router.post('/portfolio', upload.single('projImage'), addPortfolioProject);
+  router.put('/portfolio/:projectId', upload.single('projImage'), updatePortfolioProject);
+  router.delete('/portfolio/:projectId', deletePortfolioProject);
+  router.get('/portfolio', getPortfolioProjects);
+  router.get('/portfolio/:projectId', getSinglePortfolioProject);
+
+  // Routes for testimonials
+  router.post('/testimonial', upload.single('customerImage'), addTestimonial);
+  router.put('/testimonial/:testimonialId', upload.single('customerImage'), updateTestimonial);
+  router.delete('/testimonial/:testimonialId', deleteTestimonial);
+  router.get('/testimonials', getTestimonials);
+
+// Contact details
+  router.post("/contact", addContact);
+  router.put("/contact/:contactId", updateContact);
+  router.delete("/contact/:contactId", deleteContact);
+  router.get("/contact", getContact);
 
   module.exports = router;

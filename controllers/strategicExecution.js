@@ -8,7 +8,6 @@ cloudinary.config({
     api_key: '618839871375686',
     api_secret: 'ItHRC_2_-qKKhQnmpqW0UiyqL7o',
   });
-
   exports.addStrategicExecution = async (req, res, next) => {
     try {
       const { serviceId, strategic_title, strategic_description } = req.body;
@@ -24,7 +23,8 @@ cloudinary.config({
       // Create a new strategic execution instance
       const newStrategicExecution = new StrategicExecution({
         service: serviceId,
-        image: uploadedImage.secure_url,
+        stratImage: uploadedImage.secure_url,
+        stratImagePublicId: uploadedImage.public_id,
         strategic_title,
         strategic_description,
       });
@@ -57,7 +57,8 @@ cloudinary.config({
       if (req.file) {
         // Upload new image to Cloudinary
         const uploadedImage = await cloudinary.uploader.upload(req.file.path);
-        strategicExecution.image = uploadedImage.secure_url;
+        strategicExecution.stratImage = uploadedImage.secure_url;
+        strategicExecution.stratImagePublicId = uploadedImage.public_id;
       }
   
       // Update the strategic execution details
@@ -75,32 +76,34 @@ cloudinary.config({
     }
   };
   
-
-exports.deleteStrategicExecution = async (req, res, next) => {
-  try {
-    const { strategicExecutionId } = req.params;
-
-    // Find the strategic execution by ID
-    const strategicExecution = await StrategicExecution.findById(strategicExecutionId);
-
-    // Check if the strategic execution exists
-    if (!strategicExecution) {
-      return res.status(404).json({ message: "Strategic Execution not found" });
+  exports.deleteStrategicExecution = async (req, res, next) => {
+    try {
+      const { strategicExecutionId } = req.params;
+  
+      // Find the strategic execution by ID
+      const strategicExecution = await StrategicExecution.findById(strategicExecutionId);
+  
+      // Check if the strategic execution exists
+      if (!strategicExecution) {
+        return res.status(404).json({ message: "Strategic Execution not found" });
+      }
+  
+      // Delete the image from Cloudinary
+      await cloudinary.uploader.destroy(strategicExecution.stratImagePublicId);
+  
+      // Delete the strategic execution from the database
+      await strategicExecution.deleteOne();
+  
+      // Return a success message
+      return res.status(200).json({ message: "Strategic Execution deleted successfully" });
+    } catch (error) {
+      // Handle any errors
+      return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
+  };
+  
 
-    // Delete the image from Cloudinary
-    await cloudinary.uploader.destroy(strategicExecution.image);
 
-    // Delete the strategic execution from the database
-    await strategicExecution.remove();
-
-    // Return a success message
-    return res.status(200).json({ message: "Strategic Execution deleted successfully" });
-  } catch (error) {
-    // Handle any errors
-    return res.status(500).json({ message: "Internal Server Error", error: error.message });
-  }
-};
 // const a= await StrategicExecution.find({service:serviceID}).populate("service")
 exports.getStrategicExecution = async (req, res, next) => {
   try {

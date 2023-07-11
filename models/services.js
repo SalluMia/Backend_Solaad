@@ -2,6 +2,13 @@ const mongoose = require('mongoose');
 
 const serviceSchema = mongoose.Schema(
   {
+    strategy_id: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'StrategicExecution',
+        required: true,
+      }
+    ],
     title: {
       type: String,
       required: true,

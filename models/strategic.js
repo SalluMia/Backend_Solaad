@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 
 const strategicExecutionSchema = mongoose.Schema(
   {
-    service: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Services',
+    
+    stratImage: {
+      type: String,
       required: true,
     },
-    image: {
+    stratImagePublicId: { // Add new field for storing public_id
       type: String,
       required: true,
     },

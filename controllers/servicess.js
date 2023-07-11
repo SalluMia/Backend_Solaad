@@ -10,7 +10,7 @@ cloudinary.config({
 
 exports.addService = async (req, res, next) => {
   try {
-    const { title, description } = req.body;
+    const { strategy_id, title, description } = req.body;
     const image = req.file;
 
     // Upload the image to Cloudinary
@@ -20,6 +20,7 @@ exports.addService = async (req, res, next) => {
     const newService = new Service({
       title,
       description,
+      strategy_id,
       image: {
         url: result.secure_url,
         public_id: result.public_id,
@@ -116,20 +117,14 @@ exports.getServices = async (req, res, next) => {
 exports.getServiceWithStrategicExecutions = async (req, res, next) => {
     try {
       const { serviceId } = req.params;
-      console.log(serviceId)
-      // Find the service by ID and populate its strategic executions
-    //   const service = await Service.findById(serviceId).populate('service');
       const service = await StrategicExecution.find({service:serviceId}).populate('service');
   
       // Check if the service exists
       if (!service) {
         return res.status(404).json({ message: "Service not found" });
       }
-  
-      // Return the service with its strategic executions
       return res.status(200).json(service);
     } catch (error) {
-      // Handle any errors
       return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
   };
