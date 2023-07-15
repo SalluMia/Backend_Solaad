@@ -87,7 +87,7 @@ exports.deleteContact = async (req, res, next) => {
 exports.getContact = async (req, res, next) => {
   try {
     // Fetch the contact details from the database
-    const contact = await Contact.findOne();
+    const contact = await Contact.find();
 
     // Return the contact details
     return res.status(200).json(contact);

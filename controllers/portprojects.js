@@ -11,7 +11,8 @@ cloudinary.config({
 exports.addPortfolioProject = async (req, res, next) => {
   try {
     const { categoryName, projName, projDescription, projUrl, projClientName, releaseDate } = req.body;
-
+   
+    const {projImage} = req.file;
     // Check if a file is uploaded
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
