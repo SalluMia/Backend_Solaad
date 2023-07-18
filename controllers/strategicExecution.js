@@ -60,10 +60,15 @@ cloudinary.config({
         strategicExecution.stratImage = uploadedImage.secure_url;
         strategicExecution.stratImagePublicId = uploadedImage.public_id;
       }
-  
+     
+      if(strategic_title){
+        strategicExecution.strategic_title = strategic_title;
+      }
+
+      if(strategic_description){
+        strategicExecution.strategic_description = strategic_description;
+      }
       // Update the strategic execution details
-      strategicExecution.strategic_title = strategic_title;
-      strategicExecution.strategic_description = strategic_description;
   
       // Save the updated strategic execution to the database
       await strategicExecution.save();
