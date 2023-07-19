@@ -30,7 +30,7 @@ const { addStrategicExecution, updateStrategicExecution, deleteStrategicExecutio
 const { addTechnology, updateTechnology, deleteTechnology, getTechnologies} = require('../controllers/technologies');
 const { addTestimonial, updateTestimonial, deleteTestimonial, getTestimonials} = require('../controllers/testimonials');
 const { addContact, updateContact, deleteContact, getContact} = require('../controllers/contact');
-const { addPortfolioProject, updatePortfolioProject, deletePortfolioProject, getPortfolioProjects, getSinglePortfolioProject} = require('../controllers/portprojects');
+const { addPortfolioProject, updatePortfolioProject, deletePortfolioProject, getPortfolioProjects, getSinglePortfolioProject, getRelatedProjects} = require('../controllers/portprojects');
 
 
   // Add a Login
@@ -84,6 +84,7 @@ const { addPortfolioProject, updatePortfolioProject, deletePortfolioProject, get
   router.delete('/portfolio/:projectId', deletePortfolioProject);
   router.get('/portfolio', getPortfolioProjects);
   router.get('/portfolio/:projectId', getSinglePortfolioProject);
+  router.get('/getRecomended/:projectId',getRelatedProjects)
 
   // Routes for testimonials
   router.post('/testimonial', upload.single('customerImage'), addTestimonial);

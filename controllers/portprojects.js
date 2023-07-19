@@ -161,3 +161,29 @@ exports.getSinglePortfolioProject = async (req, res, next) => {
     }
   };
   
+
+  exports.getRelatedProjects = async (req, res, next) => {
+    try {
+      const { projectId } = req.params;
+  
+      // Find the portfolio project by ID
+      const portfolioProject = await PortfolioProject.findById(projectId);
+  
+      // Check if the portfolio project exists
+      if (!portfolioProject) {
+        return res.status(404).json({ message: "Portfolio project not found" });
+      }
+  
+      // Get the category name of the portfolio project
+      const categoryName = portfolioProject.categoryName;
+  
+      // Find other projects with the same category name (excluding the current project)
+      const relatedStrategies = await PortfolioProject.find({ categoryName, _id: { $ne: projectId } }).select("projImage projName");
+  
+      // Return the related strategies
+      return res.status(200).json(relatedStrategies);
+    } catch (error) {
+      // Handle any errors
+      return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+  };
