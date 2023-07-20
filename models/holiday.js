@@ -1,15 +1,15 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const holidayContentSchema = mongoose.Schema(
   {
-    startingDate: {
-      type: Date,
-      required: true,
-    },
-    endingDate: {
-      type: String,
-      required: true,
-    },
+    // startingDate: {
+    //   type: Date,
+    //   required: true,
+    // },
+    // endingDate: {
+    //   type: String,
+    //   required: true,
+    // },
     event_title: {
       type: String,
       required: true,
@@ -32,6 +32,6 @@ const holidayContentSchema = mongoose.Schema(
   }
 );
 
-const HolidayContent = mongoose.model('HolidayContent', holidayContentSchema);
+const HolidayContent = mongoose.model("HolidayContent", holidayContentSchema);
 
 module.exports = HolidayContent;

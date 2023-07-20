@@ -19,7 +19,9 @@ exports.addContact = async (req, res, next) => {
     return res.status(200).json(newContact);
   } catch (error) {
     // Handle any errors
-    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 };
 
@@ -55,7 +57,9 @@ exports.updateContact = async (req, res, next) => {
     return res.status(200).json(contact);
   } catch (error) {
     // Handle any errors
-    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 };
 
@@ -76,10 +80,14 @@ exports.deleteContact = async (req, res, next) => {
     await contact.deleteOne();
 
     // Return a success message
-    return res.status(200).json({ message: "Contact details deleted successfully" });
+    return res
+      .status(200)
+      .json({ message: "Contact details deleted successfully" });
   } catch (error) {
     // Handle any errors
-    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 };
 
@@ -87,12 +95,14 @@ exports.deleteContact = async (req, res, next) => {
 exports.getContact = async (req, res, next) => {
   try {
     // Fetch the contact details from the database
-    const contact = await Contact.findOne();
+    const contact = await Contact.find();
 
     // Return the contact details
     return res.status(200).json(contact);
   } catch (error) {
     // Handle any errors
-    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 };
