@@ -22,13 +22,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 const router=express.Router()
-const { register, login, addLogo, editLogo, deleteLogo, getLogo } = require('../controllers/user');
+const { register, login, addLogo, editLogo, deleteLogo, getLogo, updatePost } = require('../controllers/user');
 const { addHolidayEvent, updateHolidayEvent, deleteHolidayEvent, getHomePageHeroContent } = require('../controllers/holiday&events');
 const { addSocialMediaLink, getSocialMediaLinks, updateSocialMediaLink, deleteSocialMediaLink } = require('../controllers/socialmedia');
 const { addService, updateService, deleteService, getServices, getServiceWithStrategicExecutions  } = require('../controllers/servicess');
 const { addStrategicExecution, updateStrategicExecution, deleteStrategicExecution, getStrategicExecution } = require('../controllers/strategicExecution');
 const { addTechnology, updateTechnology, deleteTechnology, getTechnologies} = require('../controllers/technologies');
-const { addTestimonial, updateTestimonial, deleteTestimonial, getTestimonials} = require('../controllers/testimonials');
+const { addTestimonial, updateTestimonial, deleteTestimonial, getTestimonials, updateTestimonialByid} = require('../controllers/testimonials');
 const { addContact, updateContact, deleteContact, getContact} = require('../controllers/contact');
 const { addPortfolioProject, updatePortfolioProject, deletePortfolioProject, getPortfolioProjects, getSinglePortfolioProject, getRelatedProjects} = require('../controllers/portprojects');
 
@@ -88,7 +88,9 @@ const { addPortfolioProject, updatePortfolioProject, deletePortfolioProject, get
 
   // Routes for testimonials
   router.post('/testimonial', upload.single('customerImage'), addTestimonial);
-  router.put('/testimonial/:testimonialId', upload.single('customerImage'), updateTestimonial);
+  router.post('/testimonial/:testimonialId',updateTestimonialByid);
+  router.post('/updation/:id',updatePost);
+  router.put('/testimonialupdate/', upload.single('customerImage'), updateTestimonial);
   router.delete('/testimonial/:testimonialId', deleteTestimonial);
   router.get('/testimonials', getTestimonials);
 

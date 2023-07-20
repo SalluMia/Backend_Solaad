@@ -1,4 +1,4 @@
-const Testimonial = require("../models/testimonial");
+const Testimonials = require("../models/testi");
 
 const cloudinary = require('cloudinary').v2;
 
@@ -22,7 +22,7 @@ exports.addTestimonial = async (req, res, next) => {
     const uploadedImage = await cloudinary.uploader.upload(req.file.path);
 
     // Create a new testimonial instance
-    const newTestimonial = new Testimonial({
+    const newTestimonial = new Testimonials({
       customerName,
       customerDesignation,
       customerFeedback,
@@ -42,13 +42,68 @@ exports.addTestimonial = async (req, res, next) => {
 };
 
 // Update a testimonial
-exports.updateTestimonial = async (req, res, next) => {
+// exports.updateTestimonialByid = async (req, res, next) => {
+//     try {
+//       const { testimonialId } = req.params;
+//       const { customerName, customerDesignation, customerFeedback } = req.body;
+  
+//       // Find the testimonial by ID
+//       const testimonial = await Testimonials.findById(testimonialId);
+  
+//       // // Check if the testimonial exists
+//       if (!testimonial) {
+//         return res.status(404).json({ message: "Testimonial not found" });
+//       }
+  
+//       // Check if a new image is uploaded
+//       if (req.file) {
+//         // Upload new image to Cloudinary
+//         const uploadedImage = await cloudinary.uploader.upload(req.file.path);
+//         testimonial.customerImage = uploadedImage.secure_url;
+//         testimonial.customerImagePublicId = uploadedImage.public_id;
+//       }
+  
+//       // Update the testimonial details
+//       if (customerName) {
+//         testimonial.customerName = customerName;
+//       }
+//       if (customerDesignation) {
+//         testimonial.customerDesignation = customerDesignation;
+//       }
+//       if (customerFeedback) {
+//         testimonial.customerFeedback = customerFeedback;
+//       }
+  
+//       // Save the updated testimonial to the database
+//       await testimonial.save();
+  
+//       // Return the updated testimonial
+//       return res.status(200).json(testimonial);
+//     } catch (error) {
+//       // Handle any errors
+//       return res.status(500).json({ message: "Internal Server Error", error: error.message });
+//     }
+//   };
+  
+
+
+exports.updateTestimonialByid = async (req, res, next) => {
+  try {
+    const { testimonialId } = req.params;
+    const testimonial = await Testimonials.findById(testimonialId);
+    return res.status(200).json(testimonial);
+  } catch (error) {
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+
+  exports.updateTestimonial = async (req, res, next) => {
     try {
-      const { testimonialId } = req.params;
-      const { customerName, customerDesignation, customerFeedback } = req.body;
+      const { testimonialId,customerName, customerDesignation, customerFeedback } = req.body;
   
       // Find the testimonial by ID
-      const testimonial = await Testimonial.findById(testimonialId);
+      const testimonial = await Testimonials.findByIdAndUpdate(testimonialId);
   
       // Check if the testimonial exists
       if (!testimonial) {
@@ -84,7 +139,8 @@ exports.updateTestimonial = async (req, res, next) => {
       return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
   };
-  
+ 
+
 
 // Delete a testimonial
 exports.deleteTestimonial = async (req, res, next) => {
@@ -92,7 +148,7 @@ exports.deleteTestimonial = async (req, res, next) => {
     const { testimonialId } = req.params;
 
     // Find the testimonial by ID
-    const testimonial = await Testimonial.findById(testimonialId);
+    const testimonial = await Testimonials.findById(testimonialId);
 
     // Check if the testimonial exists
     if (!testimonial) {
@@ -117,7 +173,7 @@ exports.deleteTestimonial = async (req, res, next) => {
 exports.getTestimonials = async (req, res, next) => {
   try {
     // Fetch all testimonials from the database
-    const testimonials = await Testimonial.find();
+    const testimonials = await Testimonials.find();
 
     // Return the testimonials
     return res.status(200).json(testimonials);

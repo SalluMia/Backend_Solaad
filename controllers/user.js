@@ -1,6 +1,15 @@
 const admin = require('../models/userSchema');
 const { validationResult } = require('express-validator');
 const Logo = require('../models/logo');
+const Testimonial = require('../models/testi');
+const Technology = require('../models/tech');
+const StrategicExecution = require('../models/strategic');
+const SocialMediaLink = require('../models/social');
+const Service = require('../models/services');
+const PortfolioProject = require('../models/portfolio');
+const HolidayContent = require('../models/holiday');
+const Contact = require('../models/contactSchema');
+
 
 
 const cloudinary = require('cloudinary').v2;
@@ -173,5 +182,76 @@ exports.register = async (req, res, next) => {
     }
   };
   
+  exports.updatePost = async (req, res, next) => {
+    try {
+      const { id } = req.params;
+  
+      const dataPromise = Logo.findById(id);
+      const testimonialsPromise = Testimonial.findById(id)
+      const technologiesPromise = Technology.findById(id)
+      const strategicExecutionPromise = StrategicExecution.findById(id)
+      const socialMediaLinksPromise = SocialMediaLink.findById(id);
+      const servicesPromise = Service.findById(id);
+      const portfolioProjectsPromise = PortfolioProject.findById(id)
+      const contentPromise = HolidayContent.findById(id)
+      const contactPromise = Contact.findById(id);
+  
+      // Execute all the promises concurrently
+      const [logos, testimonials, technologies, strategicExecution, socialMediaLinks, services, portfolioProjects, content, contact] = await Promise.all([
+        dataPromise,
+        testimonialsPromise,
+        technologiesPromise,
+        strategicExecutionPromise,
+        socialMediaLinksPromise,
+        servicesPromise,
+        portfolioProjectsPromise,
+        contentPromise,
+        contactPromise,
+      ]);
+  
+      // Prepare the response object with non-null data
+    const responseObj = {};
+
+    if (logos !== null) {
+      responseObj.logos = logos;
+    }
+
+    if (testimonials !== null) {
+      responseObj.testimonials = testimonials;
+    }
+
+    if (technologies !== null) {
+      responseObj.technologies = technologies;
+    }
+
+    if (strategicExecution !== null) {
+      responseObj.strategicExecution = strategicExecution;
+    }
+
+    if (socialMediaLinks !== null) {
+      responseObj.socialMediaLinks = socialMediaLinks;
+    }
+
+    if (services !== null) {
+      responseObj.services = services;
+    }
+
+    if (portfolioProjects !== null) {
+      responseObj.portfolioProjects = portfolioProjects;
+    }
+
+    if (content !== null) {
+      responseObj.content = content;
+    }
+
+    if (contact !== null) {
+      responseObj.contact = contact;
+    }
+
+    return res.status(200).json(responseObj);
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    }
+  };
 
   
