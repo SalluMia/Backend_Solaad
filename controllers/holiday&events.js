@@ -37,7 +37,6 @@ exports.addHolidayEvent = async (req, res, next) => {
 };
 
 exports.updateHolidayEvent = async (req, res, next) => {
-<<<<<<< HEAD
     try {
         // const { holidayEventId } = req.params;
         const {holidayEventId, event_title, description } = req.body;
@@ -52,8 +51,7 @@ exports.updateHolidayEvent = async (req, res, next) => {
         }
     
         // Update the holiday/event details
-        holidayEvent.startingDate = startingDate;
-        holidayEvent.endingDate = endingDate;
+      
         holidayEvent.event_title = event_title;
         holidayEvent.description = description;
     
@@ -78,56 +76,6 @@ exports.updateHolidayEvent = async (req, res, next) => {
         // Handle any errors
         return res.status(500).json({ message: "Internal Server Error", error: error.message });
       }
-=======
-  try {
-    // const { holidayEventId } = req.params;
-    const {
-      holidayEventId,
-      startingDate,
-      endingDate,
-      event_title,
-      description,
-    } = req.body;
-    const file = req.file;
-
-    // Find the holiday/event by ID
-    const holidayEvent = await HolidayContent.findByIdAndUpdate(holidayEventId);
-
-    // Check if the holiday/event exists
-    if (!holidayEvent) {
-      return res.status(404).json({ message: "Holiday/Event not found" });
-    }
-
-    // Update the holiday/event details
-    holidayEvent.startingDate = startingDate;
-    holidayEvent.endingDate = endingDate;
-    holidayEvent.event_title = event_title;
-    holidayEvent.description = description;
-
-    if (file) {
-      // Delete existing image from Cloudinary
-      await cloudinary.uploader.destroy(holidayEvent.event_PicturePublicId);
-
-      // Upload new image to Cloudinary
-      const result = await cloudinary.uploader.upload(file.path);
-
-      // Update the event picture URL and public ID
-      holidayEvent.event_Picture = result.secure_url;
-      holidayEvent.event_PicturePublicId = result.public_id;
-    }
-
-    // Save the updated holiday/event to the database
-    await holidayEvent.save();
-
-    // Return the updated holiday/event
-    return res.status(200).json(holidayEvent);
-  } catch (error) {
-    // Handle any errors
-    return res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
-  }
->>>>>>> 84e3ed82a529d44d58a30a56f21ba92895af7bf3
 };
 
 exports.deleteHolidayEvent = async (req, res, next) => {
