@@ -47,11 +47,11 @@ exports.addPortfolioProject = async (req, res, next) => {
 // Update a portfolio project
 exports.updatePortfolioProject = async (req, res, next) => {
     try {
-      const { projectId } = req.params;
-      const { categoryName, projName, projDescription, projUrl, projClientName, releaseDate } = req.body;
+      // const { projectId } = req.params;
+      const {projectId, categoryName, projName, projDescription, projUrl, projClientName, releaseDate } = req.body;
   
       // Find the portfolio project by ID
-      const portfolioProject = await PortfolioProject.findById(projectId);
+      const portfolioProject = await PortfolioProject.findByIdAndUpdate(projectId);
   
       // Check if the portfolio project exists
       if (!portfolioProject) {
