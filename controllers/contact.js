@@ -28,11 +28,11 @@ exports.addContact = async (req, res, next) => {
 // Update contact details
 exports.updateContact = async (req, res, next) => {
   try {
-    const { contactId } = req.params;
-    const { address, email, phone } = req.body;
+    // const { contactId } = req.params;
+    const { contactId, address, email, phone } = req.body;
 
     // Find the contact details by ID
-    const contact = await Contact.findById(contactId);
+    const contact = await Contact.findByIdAndUpdate(contactId);
 
     // Check if the contact details exist
     if (!contact) {

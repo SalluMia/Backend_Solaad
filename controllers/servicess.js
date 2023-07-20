@@ -40,12 +40,12 @@ exports.addService = async (req, res, next) => {
 
 exports.updateService = async (req, res, next) => {
   try {
-    const { serviceId } = req.params;
-    const { title, description } = req.body;
+    // const { serviceId } = req.params;
+    const { serviceId,title, description } = req.body;
     const image = req.file;
 
     // Find the service by ID
-    const service = await Service.findById(serviceId);
+    const service = await Service.findByIdAndUpdate(serviceId);
 
     // Check if the service exists
     if (!service) {
@@ -59,10 +59,15 @@ exports.updateService = async (req, res, next) => {
       service.image.url = result.secure_url;
       service.image.public_id = result.public_id;
     }
-
+    
+    if(title){
+      service.title = title;
+    }
     // Update the service details
-    service.title = title;
-    service.description = description;
+
+    if(description){
+      service.description = description;
+    }
 
     // Save the updated service to the database
     await service.save();
@@ -114,10 +119,25 @@ exports.getServices = async (req, res, next) => {
   }
 };
 
-exports.getServiceWithStrategicExecutions = async (req, res, next) => {
+// exports.getServiceWithStrategicExecutions = async (req, res, next) => {
+//     try {
+//       const { serviceId } = req.params;
+//       const service = await StrategicExecution.find({service:serviceId}).populate('service');
+  
+//       // Check if the service exists
+//       if (!service) {
+//         return res.status(404).json({ message: "Service not found" });
+//       }
+//       return res.status(200).json(service);
+//     } catch (error) {
+//       return res.status(500).json({ message: "Internal Server Error", error: error.message });
+//     }
+//   };
+  
+  exports.getServiceWithStrategicExecutions = async (req, res, next) => {
     try {
       const { serviceId } = req.params;
-      const service = await StrategicExecution.find({service:serviceId}).populate('service');
+      const service = await Service.findById(serviceId).populate('strategy_id');
   
       // Check if the service exists
       if (!service) {

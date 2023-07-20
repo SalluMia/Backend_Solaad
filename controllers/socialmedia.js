@@ -36,12 +36,12 @@ exports.addSocialMediaLink = async (req, res, next) => {
 
 exports.updateSocialMediaLink = async (req, res, next) => {
   try {
-    const { socialMediaLinkId } = req.params;
-    const { platform, url } = req.body;
+    // const { socialMediaLinkId } = req.params;
+    const { socialMediaLinkId,platform, url } = req.body;
     const file = req.file;
 
     // Find the social media link by ID
-    const socialMediaLink = await SocialMediaLink.findById(socialMediaLinkId);
+    const socialMediaLink = await SocialMediaLink.findByIdAndUpdate(socialMediaLinkId);
 
     // Check if the social media link exists
     if (!socialMediaLink) {

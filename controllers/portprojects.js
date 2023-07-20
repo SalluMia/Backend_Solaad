@@ -19,6 +19,16 @@ exports.addPortfolioProject = async (req, res, next) => {
       releaseDate,
     } = req.body;
     const { projImage } = req.file;
+    const {
+      categoryName,
+      projName,
+      projDescription,
+      projUrl,
+      projClientName,
+      releaseDate,
+    } = req.body;
+
+    const { projImage } = req.file;
     // Check if a file is uploaded
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
@@ -55,8 +65,9 @@ exports.addPortfolioProject = async (req, res, next) => {
 // Update a portfolio project
 exports.updatePortfolioProject = async (req, res, next) => {
   try {
-    const { projectId } = req.params;
+    // const { projectId } = req.params;
     const {
+      projectId,
       categoryName,
       projName,
       projDescription,
@@ -66,7 +77,9 @@ exports.updatePortfolioProject = async (req, res, next) => {
     } = req.body;
 
     // Find the portfolio project by ID
-    const portfolioProject = await PortfolioProject.findById(projectId);
+    const portfolioProject = await PortfolioProject.findByIdAndUpdate(
+      projectId
+    );
 
     // Check if the portfolio project exists
     if (!portfolioProject) {
@@ -179,6 +192,68 @@ exports.getSinglePortfolioProject = async (req, res, next) => {
 
     // Return the portfolio project details
     return res.status(200).json(portfolioProject);
+  } catch (error) {
+    // Handle any errors
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+exports.getRelatedProjects = async (req, res, next) => {
+  try {
+    const { projectId } = req.params;
+
+    // Find the portfolio project by ID
+    const portfolioProject = await PortfolioProject.findById(projectId);
+
+    // Check if the portfolio project exists
+    if (!portfolioProject) {
+      return res.status(404).json({ message: "Portfolio project not found" });
+    }
+
+    // Get the category name of the portfolio project
+    const categoryName = portfolioProject.categoryName;
+
+    // Find other projects with the same category name (excluding the current project)
+    const relatedStrategies = await PortfolioProject.find({
+      categoryName,
+      _id: { $ne: projectId },
+    }).select("projImage projName");
+
+    // Return the related strategies
+    return res.status(200).json(relatedStrategies);
+  } catch (error) {
+    // Handle any errors
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+exports.getRelatedProjects = async (req, res, next) => {
+  try {
+    const { projectId } = req.params;
+
+    // Find the portfolio project by ID
+    const portfolioProject = await PortfolioProject.findById(projectId);
+
+    // Check if the portfolio project exists
+    if (!portfolioProject) {
+      return res.status(404).json({ message: "Portfolio project not found" });
+    }
+
+    // Get the category name of the portfolio project
+    const categoryName = portfolioProject.categoryName;
+
+    // Find other projects with the same category name (excluding the current project)
+    const relatedStrategies = await PortfolioProject.find({
+      categoryName,
+      _id: { $ne: projectId },
+    }).select("projImage projName");
+
+    // Return the related strategies
+    return res.status(200).json(relatedStrategies);
   } catch (error) {
     // Handle any errors
     return res

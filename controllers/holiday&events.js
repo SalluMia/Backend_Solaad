@@ -38,12 +38,18 @@ exports.addHolidayEvent = async (req, res, next) => {
 
 exports.updateHolidayEvent = async (req, res, next) => {
   try {
-    const { holidayEventId } = req.params;
-    const { startingDate, endingDate, event_title, description } = req.body;
+    // const { holidayEventId } = req.params;
+    const {
+      holidayEventId,
+      startingDate,
+      endingDate,
+      event_title,
+      description,
+    } = req.body;
     const file = req.file;
 
     // Find the holiday/event by ID
-    const holidayEvent = await HolidayContent.findById(holidayEventId);
+    const holidayEvent = await HolidayContent.findByIdAndUpdate(holidayEventId);
 
     // Check if the holiday/event exists
     if (!holidayEvent) {

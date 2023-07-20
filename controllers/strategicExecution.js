@@ -42,11 +42,11 @@ cloudinary.config({
   
   exports.updateStrategicExecution = async (req, res, next) => {
     try {
-      const { strategicExecutionId } = req.params;
-      const { strategic_title, strategic_description } = req.body;
+      // const { strategicExecutionId } = req.params;
+      const { strategicExecutionId, strategic_title, strategic_description } = req.body;
   
       // Find the strategic execution by ID
-      const strategicExecution = await StrategicExecution.findById(strategicExecutionId);
+      const strategicExecution = await StrategicExecution.findByIdAndUpdate(strategicExecutionId);
   
       // Check if the strategic execution exists
       if (!strategicExecution) {
@@ -60,15 +60,17 @@ cloudinary.config({
         strategicExecution.stratImage = uploadedImage.secure_url;
         strategicExecution.stratImagePublicId = uploadedImage.public_id;
       }
-  
-      // Update the strategic execution details
-      strategicExecution.strategic_title = strategic_title;
-      strategicExecution.strategic_description = strategic_description;
-  
-      // Save the updated strategic execution to the database
+     
+      if(strategic_title){
+        strategicExecution.strategic_title = strategic_title;
+      }
+
+      if(strategic_description){
+        strategicExecution.strategic_description = strategic_description;
+      }
+     
       await strategicExecution.save();
   
-      // Return the updated strategic execution
       return res.status(200).json(strategicExecution);
     } catch (error) {
       // Handle any errors
@@ -105,6 +107,7 @@ cloudinary.config({
 
 
 // const a= await StrategicExecution.find({service:serviceID}).populate("service")
+
 exports.getStrategicExecution = async (req, res, next) => {
   try {
 
