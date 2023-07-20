@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const holidayContentSchema = mongoose.Schema(
   {
@@ -32,6 +32,6 @@ const holidayContentSchema = mongoose.Schema(
   }
 );
 
-const HolidayContent = mongoose.model('HolidayContent', holidayContentSchema);
+const HolidayContent = mongoose.model("HolidayContent", holidayContentSchema);
 
 module.exports = HolidayContent;
