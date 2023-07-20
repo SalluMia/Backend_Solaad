@@ -18,15 +18,6 @@ exports.addPortfolioProject = async (req, res, next) => {
       projClientName,
       releaseDate,
     } = req.body;
-    const { projImage } = req.file;
-    const {
-      categoryName,
-      projName,
-      projDescription,
-      projUrl,
-      projClientName,
-      releaseDate,
-    } = req.body;
 
     const { projImage } = req.file;
     // Check if a file is uploaded
