@@ -38,8 +38,8 @@ exports.addHolidayEvent = async (req, res, next) => {
 
 exports.updateHolidayEvent = async (req, res, next) => {
     try {
-        // const { holidayEventId } = req.params;
-        const {holidayEventId, event_title, description } = req.body;
+        const { holidayEventId } = req.params;
+        const { event_title, description } = req.body;
         const file = req.file;
     
         // Find the holiday/event by ID

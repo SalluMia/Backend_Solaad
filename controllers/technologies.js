@@ -41,8 +41,8 @@ exports.addTechnology = async (req, res, next) => {
 // Update a technology
 exports.updateTechnology = async (req, res, next) => {
     try {
-      // const { technologyId } = req.params;
-      const { technologyId, techName } = req.body;
+      const { technologyId } = req.params;
+      const { techName } = req.body;
   
       // Find the technology by ID
       const technology = await Technology.findByIdAndUpdate(technologyId);

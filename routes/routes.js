@@ -47,46 +47,46 @@ const { addPortfolioProject, updatePortfolioProject, deletePortfolioProject, get
 
   // Add a Holiday & Events 
   router.post('/holiday-event',upload.single('event_Picture'), addHolidayEvent);
-  // router.put('/holiday-event/:holidayEventId',upload.single('event_Picture'), updateHolidayEvent);
-  router.put('/holiday-event/',upload.single('event_Picture'), updateHolidayEvent);
+  router.put('/holidayUpdate/:holidayEventId',upload.single('event_Picture'), updateHolidayEvent);
+  // router.put('/holiday-event/',upload.single('event_Picture'), updateHolidayEvent);
   router.delete('/holiday-event/:holidayEventId', deleteHolidayEvent);
   router.get('/holiday-event',getHomePageHeroContent);
 
 
   // Add a social media link
   router.post('/social-media',upload.single('image'),addSocialMediaLink);
-  // router.put('/social-media/:socialMediaLinkId',upload.single('image'), updateSocialMediaLink);
-  router.put('/social-media/',upload.single('image'), updateSocialMediaLink);
+  router.put('/social-media/:socialMediaLinkId',upload.single('image'), updateSocialMediaLink);
+  // router.put('/social-media/',upload.single('image'), updateSocialMediaLink);
   router.delete('/social-media/:socialMediaLinkId',deleteSocialMediaLink);
   router.get('/social-media', getSocialMediaLinks);
 
 
   //Services Routes
   router.post('/services', upload.single('image'), addService);
-  // router.put('/services/:serviceId',upload.single('image'), updateService);
-  router.put('/services/',upload.single('image'), updateService);
+  router.put('/services/:serviceId',upload.single('image'), updateService);
+  // router.put('/services/',upload.single('image'), updateService);
   router.delete('/services/:serviceId', deleteService);
   router.get('/services', getServices);
   router.get('/services/:serviceId', getServiceWithStrategicExecutions);
 
   // Strategic Executions Routes
   router.post('/strategic-executions', upload.single('stratImage'), addStrategicExecution);
-  // router.put('/strategic-executions/:strategicExecutionId', upload.single('stratImage'), updateStrategicExecution);
-  router.put('/strategic-executions/', upload.single('stratImage'), updateStrategicExecution);
+  router.put('/strategic-executions/:strategicExecutionId', upload.single('stratImage'), updateStrategicExecution);
+  // router.put('/strategic-executions/', upload.single('stratImage'), updateStrategicExecution);
   router.delete('/strategic-executions/:strategicExecutionId', deleteStrategicExecution);
   router.get('/strategic-executions', getStrategicExecution);
 
   // Add a new technology
   router.post('/technology', upload.single('image'), addTechnology);
-  // router.put('/technology/:technologyId', upload.single('image'), updateTechnology);
-  router.put('/technology/', upload.single('image'), updateTechnology);
+  router.put('/technology/:technologyId', upload.single('image'), updateTechnology);
+  // router.put('/technology/', upload.single('image'), updateTechnology);
   router.delete('/technology/:technologyId', deleteTechnology);
   router.get('/technologies', getTechnologies);
 
   // Add a new portfolio project
   router.post('/portfolio', upload.single('projImage'), addPortfolioProject);
-  // router.put('/portfolio/:projectId', upload.single('projImage'), updatePortfolioProject);
-  router.put('/portfolio/', upload.single('projImage'), updatePortfolioProject);
+  router.put('/portfolio/:projectId', upload.single('projImage'), updatePortfolioProject);
+  // router.put('/portfolio/', upload.single('projImage'), updatePortfolioProject);
   router.delete('/portfolio/:projectId', deletePortfolioProject);
   router.get('/portfolio', getPortfolioProjects);
   router.get('/portfolio/:projectId', getSinglePortfolioProject);
@@ -96,14 +96,15 @@ const { addPortfolioProject, updatePortfolioProject, deletePortfolioProject, get
   router.post('/testimonial', upload.single('customerImage'), addTestimonial);
   router.post('/testimonial/:testimonialId',updateTestimonialByid);
   router.post('/updation/:id',updatePost);
-  router.put('/testimonialupdate/', upload.single('customerImage'), updateTestimonial);
+  router.put('/testimonialupdate/:testimonialId', upload.single('customerImage'), updateTestimonial);
+  // router.put('/testimonialupdate/', upload.single('customerImage'), updateTestimonial);
   router.delete('/testimonial/:testimonialId', deleteTestimonial);
   router.get('/testimonials', getTestimonials);
 
 // Contact details
   router.post("/contact", addContact);
-  // router.put("/contact/:contactId", updateContact);
-  router.put("/contact/", updateContact);
+  router.put("/contact/:contactId", updateContact);
+  // router.put("/contact/", updateContact);
   router.delete("/contact/:contactId", deleteContact);
   router.get("/contact", getContact);
 

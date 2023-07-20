@@ -56,9 +56,8 @@ exports.addPortfolioProject = async (req, res, next) => {
 // Update a portfolio project
 exports.updatePortfolioProject = async (req, res, next) => {
   try {
-    // const { projectId } = req.params;
+    const { projectId } = req.params;
     const {
-      projectId,
       categoryName,
       projName,
       projDescription,

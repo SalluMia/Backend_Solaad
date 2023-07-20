@@ -40,8 +40,8 @@ exports.addService = async (req, res, next) => {
 
 exports.updateService = async (req, res, next) => {
   try {
-    // const { serviceId } = req.params;
-    const { serviceId,title, description } = req.body;
+    const { serviceId } = req.params;
+    const { title, description } = req.body;
     const image = req.file;
 
     // Find the service by ID

@@ -42,8 +42,8 @@ cloudinary.config({
   
   exports.updateStrategicExecution = async (req, res, next) => {
     try {
-      // const { strategicExecutionId } = req.params;
-      const { strategicExecutionId, strategic_title, strategic_description } = req.body;
+      const { strategicExecutionId } = req.params;
+      const { strategic_title, strategic_description } = req.body;
   
       // Find the strategic execution by ID
       const strategicExecution = await StrategicExecution.findByIdAndUpdate(strategicExecutionId);

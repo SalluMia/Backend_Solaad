@@ -100,7 +100,9 @@ exports.updateTestimonialByid = async (req, res, next) => {
 
   exports.updateTestimonial = async (req, res, next) => {
     try {
-      const { testimonialId,customerName, customerDesignation, customerFeedback } = req.body;
+
+      const{testimonialId}=req.params;
+      const {customerName, customerDesignation, customerFeedback } = req.body;
   
       // Find the testimonial by ID
       const testimonial = await Testimonials.findByIdAndUpdate(testimonialId);
