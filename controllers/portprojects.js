@@ -7,7 +7,7 @@ cloudinary.config({
   api_secret: "ItHRC_2_-qKKhQnmpqW0UiyqL7o",
 });
 
-// Add a new portfolio project
+
 exports.addPortfolioProject = async (req, res, next) => {
   try {
     const {
@@ -19,14 +19,11 @@ exports.addPortfolioProject = async (req, res, next) => {
       releaseDate,
     } = req.body;
 
-    const { projImage } = req.file;
+    const file = req.file;
     // Check if a file is uploaded
-    if (!req.file) {
+    if (!file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
-
-    // Upload image to Cloudinary
-    const uploadedImage = await cloudinary.uploader.upload(req.file.path);
 
     // Create a new portfolio project instance
     const newPortfolioProject = new PortfolioProject({
@@ -34,8 +31,7 @@ exports.addPortfolioProject = async (req, res, next) => {
       projName,
       projDescription,
       projUrl,
-      projImage: uploadedImage.secure_url,
-      projImagePublicId: uploadedImage.public_id,
+      projImage: file.filename, // Assuming you stored the filename in the PortfolioProject model
       projClientName,
       releaseDate,
     });
@@ -47,13 +43,10 @@ exports.addPortfolioProject = async (req, res, next) => {
     return res.status(200).json(newPortfolioProject);
   } catch (error) {
     // Handle any errors
-    return res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
 
-// Update a portfolio project
 exports.updatePortfolioProject = async (req, res, next) => {
   try {
     const { projectId } = req.params;
@@ -67,24 +60,28 @@ exports.updatePortfolioProject = async (req, res, next) => {
     } = req.body;
 
     // Find the portfolio project by ID
-    const portfolioProject = await PortfolioProject.findByIdAndUpdate(
-      projectId
-    );
+    const portfolioProject = await PortfolioProject.findById(projectId);
 
     // Check if the portfolio project exists
     if (!portfolioProject) {
       return res.status(404).json({ message: "Portfolio project not found" });
     }
 
-    // Check if a new image is uploaded
-    if (req.file) {
-      // Upload new image to Cloudinary
-      const uploadedImage = await cloudinary.uploader.upload(req.file.path);
-      portfolioProject.projImage = uploadedImage.secure_url;
-      portfolioProject.projImagePublicId = uploadedImage.public_id;
+    const file = req.file;
+    // If a new file was uploaded, update the image filename
+    if (file) {
+      // Delete existing image from the server (if any)
+      // Assuming you stored the image in the 'uploads/' directory
+      if (portfolioProject.projImage) {
+        const fs = require('fs');
+        fs.unlinkSync(`uploads/${portfolioProject.projImage}`);
+      }
+
+      // Update the image filename with the new file's filename
+      portfolioProject.projImage = file.filename;
     }
 
-    // Update the portfolio project details
+    // Update the portfolio project details if provided
     if (categoryName) {
       portfolioProject.categoryName = categoryName;
     }
@@ -111,13 +108,10 @@ exports.updatePortfolioProject = async (req, res, next) => {
     return res.status(200).json(portfolioProject);
   } catch (error) {
     // Handle any errors
-    return res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
 
-// Delete a portfolio project
 exports.deletePortfolioProject = async (req, res, next) => {
   try {
     const { projectId } = req.params;
@@ -130,23 +124,165 @@ exports.deletePortfolioProject = async (req, res, next) => {
       return res.status(404).json({ message: "Portfolio project not found" });
     }
 
-    // Delete the image from Cloudinary
-    await cloudinary.uploader.destroy(portfolioProject.projImagePublicId);
+    // If the portfolio project has an image, delete it from the server (if any)
+    // Assuming you stored the image in the 'uploads/' directory
+    if (portfolioProject.projImage) {
+      const fs = require('fs');
+      fs.unlinkSync(`uploads/${portfolioProject.projImage}`);
+    }
 
     // Delete the portfolio project from the database
     await portfolioProject.deleteOne();
 
     // Return a success message
-    return res
-      .status(200)
-      .json({ message: "Portfolio project deleted successfully" });
+    return res.status(200).json({ message: "Portfolio project deleted successfully" });
   } catch (error) {
     // Handle any errors
-    return res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
+
+
+// Add a new portfolio project
+// exports.addPortfolioProject = async (req, res, next) => {
+//   try {
+//     const {
+//       categoryName,
+//       projName,
+//       projDescription,
+//       projUrl,
+//       projClientName,
+//       releaseDate,
+//     } = req.body;
+
+//     const { projImage } = req.file;
+//     // Check if a file is uploaded
+//     if (!req.file) {
+//       return res.status(400).json({ message: "No file uploaded" });
+//     }
+
+//     // Upload image to Cloudinary
+//     const uploadedImage = await cloudinary.uploader.upload(req.file.path);
+
+//     // Create a new portfolio project instance
+//     const newPortfolioProject = new PortfolioProject({
+//       categoryName,
+//       projName,
+//       projDescription,
+//       projUrl,
+//       projImage: uploadedImage.secure_url,
+//       projImagePublicId: uploadedImage.public_id,
+//       projClientName,
+//       releaseDate,
+//     });
+
+//     // Save the portfolio project to the database
+//     await newPortfolioProject.save();
+
+//     // Return the added portfolio project
+//     return res.status(200).json(newPortfolioProject);
+//   } catch (error) {
+//     // Handle any errors
+//     return res
+//       .status(500)
+//       .json({ message: "Internal Server Error", error: error.message });
+//   }
+// };
+
+// // Update a portfolio project
+// exports.updatePortfolioProject = async (req, res, next) => {
+//   try {
+//     const { projectId } = req.params;
+//     const {
+//       categoryName,
+//       projName,
+//       projDescription,
+//       projUrl,
+//       projClientName,
+//       releaseDate,
+//     } = req.body;
+
+//     // Find the portfolio project by ID
+//     const portfolioProject = await PortfolioProject.findByIdAndUpdate(
+//       projectId
+//     );
+
+//     // Check if the portfolio project exists
+//     if (!portfolioProject) {
+//       return res.status(404).json({ message: "Portfolio project not found" });
+//     }
+
+//     // Check if a new image is uploaded
+//     if (req.file) {
+//       // Upload new image to Cloudinary
+//       const uploadedImage = await cloudinary.uploader.upload(req.file.path);
+//       portfolioProject.projImage = uploadedImage.secure_url;
+//       portfolioProject.projImagePublicId = uploadedImage.public_id;
+//     }
+
+//     // Update the portfolio project details
+//     if (categoryName) {
+//       portfolioProject.categoryName = categoryName;
+//     }
+//     if (projName) {
+//       portfolioProject.projName = projName;
+//     }
+//     if (projDescription) {
+//       portfolioProject.projDescription = projDescription;
+//     }
+//     if (projUrl) {
+//       portfolioProject.projUrl = projUrl;
+//     }
+//     if (projClientName) {
+//       portfolioProject.projClientName = projClientName;
+//     }
+//     if (releaseDate) {
+//       portfolioProject.releaseDate = releaseDate;
+//     }
+
+//     // Save the updated portfolio project to the database
+//     await portfolioProject.save();
+
+//     // Return the updated portfolio project
+//     return res.status(200).json(portfolioProject);
+//   } catch (error) {
+//     // Handle any errors
+//     return res
+//       .status(500)
+//       .json({ message: "Internal Server Error", error: error.message });
+//   }
+// };
+
+// // Delete a portfolio project
+// exports.deletePortfolioProject = async (req, res, next) => {
+//   try {
+//     const { projectId } = req.params;
+
+//     // Find the portfolio project by ID
+//     const portfolioProject = await PortfolioProject.findById(projectId);
+
+//     // Check if the portfolio project exists
+//     if (!portfolioProject) {
+//       return res.status(404).json({ message: "Portfolio project not found" });
+//     }
+
+//     // Delete the image from Cloudinary
+//     await cloudinary.uploader.destroy(portfolioProject.projImagePublicId);
+
+//     // Delete the portfolio project from the database
+//     await portfolioProject.deleteOne();
+
+//     // Return a success message
+//     return res
+//       .status(200)
+//       .json({ message: "Portfolio project deleted successfully" });
+//   } catch (error) {
+//     // Handle any errors
+//     return res
+//       .status(500)
+//       .json({ message: "Internal Server Error", error: error.message });
+//   }
+// };
 
 // Get all portfolio projects
 exports.getPortfolioProjects = async (req, res, next) => {

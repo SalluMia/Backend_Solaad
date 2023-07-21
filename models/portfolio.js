@@ -22,10 +22,10 @@ const portfolioProjectSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    projImagePublicId: {
-      type: String,
-      required: true,
-    },
+    // projImagePublicId: {
+    //   type: String,
+    //   required: true,
+    // },
     projClientName: {
       type: String,
       required: true,

@@ -10,10 +10,10 @@ const technologySchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    imagePublicId: {
-      type: String,
-      required: true,
-    },
+    // imagePublicId: {
+    //   type: String,
+    //   required: true,
+    // },
   },
   {
     timestamps: true,
