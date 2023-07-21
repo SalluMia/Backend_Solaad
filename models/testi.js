@@ -18,10 +18,10 @@ const testimonialSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    customerImagePublicId: {
-      type: String,
-      required: true,
-    },
+    // customerImagePublicId: {
+    //   type: String,
+    //   required: true,
+    // },
   },
   {
     timestamps: true,

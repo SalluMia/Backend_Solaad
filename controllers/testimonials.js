@@ -8,26 +8,23 @@ cloudinary.config({
   api_secret: 'ItHRC_2_-qKKhQnmpqW0UiyqL7o',
 });
 
-// Add a new testimonial
+
 exports.addTestimonial = async (req, res, next) => {
   try {
     const { customerName, customerDesignation, customerFeedback } = req.body;
+    const file = req.file;
 
-    // Check if a file is uploaded
-    if (!req.file) {
+    // If no file is uploaded, return an error
+    if (!file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
-
-    // Upload image to Cloudinary
-    const uploadedImage = await cloudinary.uploader.upload(req.file.path);
 
     // Create a new testimonial instance
     const newTestimonial = new Testimonials({
       customerName,
       customerDesignation,
       customerFeedback,
-      customerImage: uploadedImage.secure_url,
-      customerImagePublicId: uploadedImage.public_id,
+      customerImage: file.filename, // Assuming you stored the filename in the Testimonials model
     });
 
     // Save the testimonial to the database
@@ -40,6 +37,122 @@ exports.addTestimonial = async (req, res, next) => {
     return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
+
+exports.updateTestimonial = async (req, res, next) => {
+  try {
+    const { testimonialId } = req.params;
+    const { customerName, customerDesignation, customerFeedback } = req.body;
+    const file = req.file;
+
+    // Find the testimonial by ID
+    const testimonial = await Testimonials.findById(testimonialId);
+
+    // Check if the testimonial exists
+    if (!testimonial) {
+      return res.status(404).json({ message: "Testimonial not found" });
+    }
+
+    // If a new file was uploaded, update the image filename
+    if (file) {
+      // Delete existing image from the server (if any)
+      // Assuming you stored the image in the 'uploads/' directory
+      if (testimonial.customerImage) {
+        const fs = require('fs');
+        fs.unlinkSync(`uploads/${testimonial.customerImage}`);
+      }
+
+      // Update the image filename with the new file's filename
+      testimonial.customerImage = file.filename;
+    }
+
+    // Update the testimonial details if provided
+    if (customerName) {
+      testimonial.customerName = customerName;
+    }
+    if (customerDesignation) {
+      testimonial.customerDesignation = customerDesignation;
+    }
+    if (customerFeedback) {
+      testimonial.customerFeedback = customerFeedback;
+    }
+
+    // Save the updated testimonial to the database
+    await testimonial.save();
+
+    // Return the updated testimonial
+    return res.status(200).json(testimonial);
+  } catch (error) {
+    // Handle any errors
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+exports.deleteTestimonial = async (req, res, next) => {
+  try {
+    const { testimonialId } = req.params;
+
+    // Find the testimonial by ID
+    const testimonial = await Testimonials.findById(testimonialId);
+
+    // Check if the testimonial exists
+    if (!testimonial) {
+      return res.status(404).json({ message: "Testimonial not found" });
+    }
+
+    // If the testimonial has an image, delete it from the server (if any)
+    // Assuming you stored the image in the 'uploads/' directory
+    if (testimonial.customerImage) {
+      const fs = require('fs');
+      fs.unlinkSync(`uploads/${testimonial.customerImage}`);
+    }
+
+    // Delete the testimonial from the database
+    await testimonial.deleteOne();
+
+    // Return a success message
+    return res.status(200).json({ message: "Testimonial deleted successfully" });
+  } catch (error) {
+    // Handle any errors
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+
+
+
+
+// Add a new testimonial
+// exports.addTestimonial = async (req, res, next) => {
+//   try {
+//     const { customerName, customerDesignation, customerFeedback } = req.body;
+
+//     // Check if a file is uploaded
+//     if (!req.file) {
+//       return res.status(400).json({ message: "No file uploaded" });
+//     }
+
+//     // Upload image to Cloudinary
+//     const uploadedImage = await cloudinary.uploader.upload(req.file.path);
+
+//     // Create a new testimonial instance
+//     const newTestimonial = new Testimonials({
+//       customerName,
+//       customerDesignation,
+//       customerFeedback,
+//       customerImage: uploadedImage.secure_url,
+//       customerImagePublicId: uploadedImage.public_id,
+//     });
+
+//     // Save the testimonial to the database
+//     await newTestimonial.save();
+
+//     // Return the added testimonial
+//     return res.status(200).json(newTestimonial);
+//   } catch (error) {
+//     // Handle any errors
+//     return res.status(500).json({ message: "Internal Server Error", error: error.message });
+//   }
+// };
 
 // Update a testimonial
 // exports.updateTestimonialByid = async (req, res, next) => {
@@ -98,78 +211,78 @@ exports.updateTestimonialByid = async (req, res, next) => {
 };
 
 
-  exports.updateTestimonial = async (req, res, next) => {
-    try {
+//   exports.updateTestimonial = async (req, res, next) => {
+//     try {
 
-      const{testimonialId}=req.params;
-      const {customerName, customerDesignation, customerFeedback } = req.body;
+//       const{testimonialId}=req.params;
+//       const {customerName, customerDesignation, customerFeedback } = req.body;
   
-      // Find the testimonial by ID
-      const testimonial = await Testimonials.findByIdAndUpdate(testimonialId);
+//       // Find the testimonial by ID
+//       const testimonial = await Testimonials.findByIdAndUpdate(testimonialId);
   
-      // Check if the testimonial exists
-      if (!testimonial) {
-        return res.status(404).json({ message: "Testimonial not found" });
-      }
+//       // Check if the testimonial exists
+//       if (!testimonial) {
+//         return res.status(404).json({ message: "Testimonial not found" });
+//       }
   
-      // Check if a new image is uploaded
-      if (req.file) {
-        // Upload new image to Cloudinary
-        const uploadedImage = await cloudinary.uploader.upload(req.file.path);
-        testimonial.customerImage = uploadedImage.secure_url;
-        testimonial.customerImagePublicId = uploadedImage.public_id;
-      }
+//       // Check if a new image is uploaded
+//       if (req.file) {
+//         // Upload new image to Cloudinary
+//         const uploadedImage = await cloudinary.uploader.upload(req.file.path);
+//         testimonial.customerImage = uploadedImage.secure_url;
+//         testimonial.customerImagePublicId = uploadedImage.public_id;
+//       }
   
-      // Update the testimonial details
-      if (customerName) {
-        testimonial.customerName = customerName;
-      }
-      if (customerDesignation) {
-        testimonial.customerDesignation = customerDesignation;
-      }
-      if (customerFeedback) {
-        testimonial.customerFeedback = customerFeedback;
-      }
+//       // Update the testimonial details
+//       if (customerName) {
+//         testimonial.customerName = customerName;
+//       }
+//       if (customerDesignation) {
+//         testimonial.customerDesignation = customerDesignation;
+//       }
+//       if (customerFeedback) {
+//         testimonial.customerFeedback = customerFeedback;
+//       }
   
-      // Save the updated testimonial to the database
-      await testimonial.save();
+//       // Save the updated testimonial to the database
+//       await testimonial.save();
   
-      // Return the updated testimonial
-      return res.status(200).json(testimonial);
-    } catch (error) {
-      // Handle any errors
-      return res.status(500).json({ message: "Internal Server Error", error: error.message });
-    }
-  };
+//       // Return the updated testimonial
+//       return res.status(200).json(testimonial);
+//     } catch (error) {
+//       // Handle any errors
+//       return res.status(500).json({ message: "Internal Server Error", error: error.message });
+//     }
+//   };
  
 
 
-// Delete a testimonial
-exports.deleteTestimonial = async (req, res, next) => {
-  try {
-    const { testimonialId } = req.params;
+// // Delete a testimonial
+// exports.deleteTestimonial = async (req, res, next) => {
+//   try {
+//     const { testimonialId } = req.params;
 
-    // Find the testimonial by ID
-    const testimonial = await Testimonials.findById(testimonialId);
+//     // Find the testimonial by ID
+//     const testimonial = await Testimonials.findById(testimonialId);
 
-    // Check if the testimonial exists
-    if (!testimonial) {
-      return res.status(404).json({ message: "Testimonial not found" });
-    }
+//     // Check if the testimonial exists
+//     if (!testimonial) {
+//       return res.status(404).json({ message: "Testimonial not found" });
+//     }
 
-    // Delete the image from Cloudinary
-    await cloudinary.uploader.destroy(testimonial.customerImagePublicId);
+//     // Delete the image from Cloudinary
+//     await cloudinary.uploader.destroy(testimonial.customerImagePublicId);
 
-    // Delete the testimonial from the database
-    await testimonial.deleteOne();
+//     // Delete the testimonial from the database
+//     await testimonial.deleteOne();
 
-    // Return a success message
-    return res.status(200).json({ message: "Testimonial deleted successfully" });
-  } catch (error) {
-    // Handle any errors
-    return res.status(500).json({ message: "Internal Server Error", error: error.message });
-  }
-};
+//     // Return a success message
+//     return res.status(200).json({ message: "Testimonial deleted successfully" });
+//   } catch (error) {
+//     // Handle any errors
+//     return res.status(500).json({ message: "Internal Server Error", error: error.message });
+//   }
+// };
 
 // Get all testimonials
 exports.getTestimonials = async (req, res, next) => {
