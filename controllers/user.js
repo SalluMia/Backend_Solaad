@@ -79,56 +79,56 @@ exports.register = async (req, res, next) => {
       return res.status(500).json({ message: "Internal Server Error" });
     }
   };
-  
-  
+
+
   exports.addLogo = async (req, res, next) => {
     try {
-      // Check if any logo already exists
+
       const existingLogo = await Logo.findOne();
       if (existingLogo) {
         return res.status(400).json({ message: "Logo already uploaded" });
       }
   
-      // Upload the logo to cloudinary
-      const result = await cloudinary.uploader.upload(req.file.path);
+      if (!req.file) {
+        return res.status(400).json({ message: "No logo file provided" });
+      }
   
-      // Create a new logo instance
       const newLogo = new Logo({
-        logopic: result.secure_url,
+        logopic: req.file.filename, 
       });
   
-      // Save the logo to the database
       await newLogo.save();
   
-      // Return the added logo
       return res.status(200).json(newLogo);
     } catch (error) {
-      // Handle any errors
       return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
   };
-  
-  
+
+
   exports.editLogo = async (req, res, next) => {
     try {
       const { logoId } = req.params;
   
-      // Find the logo by ID
       const logo = await Logo.findById(logoId);
   
-      // Check if the logo exists
       if (!logo) {
         return res.status(404).json({ message: "Logo not found" });
       }
   
-      // Delete the existing logo from cloudinary
-      await cloudinary.uploader.destroy(logo.logopic);
+      if (!req.file) {
+        return res.status(400).json({ message: "No logo file provided" });
+      }
   
-      // Upload the new logo to cloudinary
-      const result = await cloudinary.uploader.upload(req.file.path);
+      // Delete the existing logo file from the server (if any)
+      // Assuming you stored the logo file in the 'uploads/' directory
+      if (logo.logopic) {
+        const fs = require('fs');
+        fs.unlinkSync(`uploads/${logo.logopic}`);
+      }
   
-      // Update the logo's logopic
-      logo.logopic = result.secure_url;
+      // Update the logo's logopic (filename) with the new file's filename
+      logo.logopic = req.file.filename;
   
       // Save the updated logo to the database
       await logo.save();
@@ -137,7 +137,7 @@ exports.register = async (req, res, next) => {
       return res.status(200).json(logo);
     } catch (error) {
       // Handle any errors
-      return res.status(500).json({ message: "Internal Server Error" });
+      return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
   };
   
@@ -153,6 +153,13 @@ exports.register = async (req, res, next) => {
         return res.status(404).json({ message: "Logo not found" });
       }
   
+      // If the logo has a file, delete it from the server (if any)
+      // Assuming you stored the logo file in the 'uploads/' directory
+      if (logo.logopic) {
+        const fs = require('fs');
+        fs.unlinkSync(`uploads/${logo.logopic}`);
+      }
+  
       // Delete the logo from the database
       await logo.deleteOne();
   
@@ -163,7 +170,8 @@ exports.register = async (req, res, next) => {
       return res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
   };
-  
+
+
   exports.getLogo = async (req, res, next) => {
     try {
       // Find the logo
@@ -254,4 +262,91 @@ exports.register = async (req, res, next) => {
     }
   };
 
+  
+  // exports.addLogo = async (req, res, next) => {
+  //   try {
+  //     // Check if any logo already exists
+  //     const existingLogo = await Logo.findOne();
+  //     if (existingLogo) {
+  //       return res.status(400).json({ message: "Logo already uploaded" });
+  //     }
+  
+  //     // Upload the logo to cloudinary
+  //     const result = await cloudinary.uploader.upload(req.file.path);
+  
+  //     // Create a new logo instance
+  //     const newLogo = new Logo({
+  //       logopic: result.secure_url,
+  //     });
+  
+  //     // Save the logo to the database
+  //     await newLogo.save();
+  
+  //     // Return the added logo
+  //     return res.status(200).json(newLogo);
+  //   } catch (error) {
+  //     // Handle any errors
+  //     return res.status(500).json({ message: "Internal Server Error", error: error.message });
+  //   }
+  // };
+  
+
+
+
+  // exports.editLogo = async (req, res, next) => {
+  //   try {
+  //     const { logoId } = req.params;
+  
+  //     // Find the logo by ID
+  //     const logo = await Logo.findById(logoId);
+  
+  //     // Check if the logo exists
+  //     if (!logo) {
+  //       return res.status(404).json({ message: "Logo not found" });
+  //     }
+  
+  //     // Delete the existing logo from cloudinary
+  //     await cloudinary.uploader.destroy(logo.logopic);
+  
+  //     // Upload the new logo to cloudinary
+  //     const result = await cloudinary.uploader.upload(req.file.path);
+  
+  //     // Update the logo's logopic
+  //     logo.logopic = result.secure_url;
+  
+  //     // Save the updated logo to the database
+  //     await logo.save();
+  
+  //     // Return the updated logo
+  //     return res.status(200).json(logo);
+  //   } catch (error) {
+  //     // Handle any errors
+  //     return res.status(500).json({ message: "Internal Server Error" });
+  //   }
+  // };
+  
+  // exports.deleteLogo = async (req, res, next) => {
+  //   try {
+  //     const { logoId } = req.params;
+  
+  //     // Find the logo by ID
+  //     const logo = await Logo.findById(logoId);
+  
+  //     // Check if the logo exists
+  //     if (!logo) {
+  //       return res.status(404).json({ message: "Logo not found" });
+  //     }
+  
+  //     // Delete the logo from the database
+  //     await logo.deleteOne();
+  
+  //     // Return a success message
+  //     return res.status(200).json({ message: "Logo deleted successfully" });
+  //   } catch (error) {
+  //     // Handle any errors
+  //     return res.status(500).json({ message: "Internal Server Error", error: error.message });
+  //   }
+  // };
+  
+ 
   
