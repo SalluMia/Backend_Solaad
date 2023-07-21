@@ -175,7 +175,7 @@ exports.register = async (req, res, next) => {
   exports.getLogo = async (req, res, next) => {
     try {
       // Find the logo
-      const logo = await Logo.findOne();
+      const logo = await Logo.find();
   
       // Check if a logo exists
       if (!logo) {

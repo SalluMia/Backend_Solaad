@@ -7,10 +7,10 @@ const strategicExecutionSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    stratImagePublicId: { // Add new field for storing public_id
-      type: String,
-      required: true,
-    },
+    // stratImagePublicId: { // Add new field for storing public_id
+    //   type: String,
+    //   required: true,
+    // },
     strategic_title: {
       type: String,
       required: true,

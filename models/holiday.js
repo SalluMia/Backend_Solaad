@@ -22,10 +22,10 @@ const holidayContentSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    event_PicturePublicId: {
-      type: String,
-      required: true,
-    },
+    // event_PicturePublicId: {
+    //   type: String,
+    //   required: true,
+    // },
   },
   {
     timestamps: true,

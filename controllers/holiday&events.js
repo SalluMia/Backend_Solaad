@@ -7,20 +7,22 @@ cloudinary.config({
   api_secret: "ItHRC_2_-qKKhQnmpqW0UiyqL7o",
 });
 
+
 exports.addHolidayEvent = async (req, res, next) => {
   try {
     const { event_title, description } = req.body;
     const file = req.file;
 
-    // Upload image to Cloudinary
-    const result = await cloudinary.uploader.upload(file.path);
+    // If a file was uploaded, Multer will populate req.file
+    if (!file) {
+      return res.status(400).json({ message: "No image file provided" });
+    }
 
     // Create a new holiday/event instance
     const newHolidayEvent = new HolidayContent({
       event_title,
       description,
-      event_Picture: result.secure_url,
-      event_PicturePublicId: result.public_id,
+      event_Picture: file.filename, // Assuming you stored the filename in the HolidayContent model
     });
 
     // Save the holiday/event to the database
@@ -30,52 +32,50 @@ exports.addHolidayEvent = async (req, res, next) => {
     return res.status(200).json(newHolidayEvent);
   } catch (error) {
     // Handle any errors
-    return res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
 
 exports.updateHolidayEvent = async (req, res, next) => {
-    try {
-        const { holidayEventId } = req.params;
-        const { event_title, description } = req.body;
-        const file = req.file;
-    
-        // Find the holiday/event by ID
-        const holidayEvent = await HolidayContent.findByIdAndUpdate(holidayEventId);
-    
-        // Check if the holiday/event exists
-        if (!holidayEvent) {
-          return res.status(404).json({ message: "Holiday/Event not found" });
-        }
-    
-        // Update the holiday/event details
-      
-        holidayEvent.event_title = event_title;
-        holidayEvent.description = description;
-    
-        if (file) {
-          // Delete existing image from Cloudinary
-          await cloudinary.uploader.destroy(holidayEvent.event_PicturePublicId);
-    
-          // Upload new image to Cloudinary
-          const result = await cloudinary.uploader.upload(file.path);
-    
-          // Update the event picture URL and public ID
-          holidayEvent.event_Picture = result.secure_url;
-          holidayEvent.event_PicturePublicId = result.public_id;
-        }
-    
-        // Save the updated holiday/event to the database
-        await holidayEvent.save();
-    
-        // Return the updated holiday/event
-        return res.status(200).json(holidayEvent);
-      } catch (error) {
-        // Handle any errors
-        return res.status(500).json({ message: "Internal Server Error", error: error.message });
+  try {
+    const { holidayEventId } = req.params;
+    const { event_title, description } = req.body;
+    const file = req.file;
+
+    // Find the holiday/event by ID
+    const holidayEvent = await HolidayContent.findById(holidayEventId);
+
+    // Check if the holiday/event exists
+    if (!holidayEvent) {
+      return res.status(404).json({ message: "Holiday/Event not found" });
+    }
+
+    // Update the holiday/event details
+    holidayEvent.event_title = event_title;
+    holidayEvent.description = description;
+
+    // If a new file was uploaded, update the event picture filename
+    if (file) {
+      // Delete existing image from the server (if any)
+      // Assuming you stored the event picture in the 'uploads/' directory
+      if (holidayEvent.event_Picture) {
+        const fs = require('fs');
+        fs.unlinkSync(`uploads/${holidayEvent.event_Picture}`);
       }
+
+      // Update the event picture filename with the new file's filename
+      holidayEvent.event_Picture = file.filename;
+    }
+
+    // Save the updated holiday/event to the database
+    await holidayEvent.save();
+
+    // Return the updated holiday/event
+    return res.status(200).json(holidayEvent);
+  } catch (error) {
+    // Handle any errors
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
 };
 
 exports.deleteHolidayEvent = async (req, res, next) => {
@@ -90,23 +90,125 @@ exports.deleteHolidayEvent = async (req, res, next) => {
       return res.status(404).json({ message: "Holiday/Event not found" });
     }
 
-    // Delete the event picture from Cloudinary
-    await cloudinary.uploader.destroy(holidayEvent.event_PicturePublicId);
+    // If the holiday/event has a file, delete it from the server (if any)
+    // Assuming you stored the event picture in the 'uploads/' directory
+    if (holidayEvent.event_Picture) {
+      const fs = require('fs');
+      fs.unlinkSync(`uploads/${holidayEvent.event_Picture}`);
+    }
 
     // Delete the holiday/event from the database
     await holidayEvent.deleteOne();
 
     // Return a success message
-    return res
-      .status(200)
-      .json({ message: "Holiday/Event deleted successfully" });
+    return res.status(200).json({ message: "Holiday/Event deleted successfully" });
   } catch (error) {
     // Handle any errors
-    return res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
+
+
+// exports.addHolidayEvent = async (req, res, next) => {
+//   try {
+//     const { event_title, description } = req.body;
+//     const file = req.file;
+
+//     // Upload image to Cloudinary
+//     const result = await cloudinary.uploader.upload(file.path);
+
+//     // Create a new holiday/event instance
+//     const newHolidayEvent = new HolidayContent({
+//       event_title,
+//       description,
+//       event_Picture: result.secure_url,
+//       event_PicturePublicId: result.public_id,
+//     });
+
+//     // Save the holiday/event to the database
+//     await newHolidayEvent.save();
+
+//     // Return the added holiday/event
+//     return res.status(200).json(newHolidayEvent);
+//   } catch (error) {
+//     // Handle any errors
+//     return res
+//       .status(500)
+//       .json({ message: "Internal Server Error", error: error.message });
+//   }
+// };
+
+// exports.updateHolidayEvent = async (req, res, next) => {
+//     try {
+//         const { holidayEventId } = req.params;
+//         const { event_title, description } = req.body;
+//         const file = req.file;
+    
+//         // Find the holiday/event by ID
+//         const holidayEvent = await HolidayContent.findByIdAndUpdate(holidayEventId);
+    
+//         // Check if the holiday/event exists
+//         if (!holidayEvent) {
+//           return res.status(404).json({ message: "Holiday/Event not found" });
+//         }
+    
+//         // Update the holiday/event details
+      
+//         holidayEvent.event_title = event_title;
+//         holidayEvent.description = description;
+    
+//         if (file) {
+//           // Delete existing image from Cloudinary
+//           await cloudinary.uploader.destroy(holidayEvent.event_PicturePublicId);
+    
+//           // Upload new image to Cloudinary
+//           const result = await cloudinary.uploader.upload(file.path);
+    
+//           // Update the event picture URL and public ID
+//           holidayEvent.event_Picture = result.secure_url;
+//           holidayEvent.event_PicturePublicId = result.public_id;
+//         }
+    
+//         // Save the updated holiday/event to the database
+//         await holidayEvent.save();
+    
+//         // Return the updated holiday/event
+//         return res.status(200).json(holidayEvent);
+//       } catch (error) {
+//         // Handle any errors
+//         return res.status(500).json({ message: "Internal Server Error", error: error.message });
+//       }
+// };
+
+// exports.deleteHolidayEvent = async (req, res, next) => {
+//   try {
+//     const { holidayEventId } = req.params;
+
+//     // Find the holiday/event by ID
+//     const holidayEvent = await HolidayContent.findById(holidayEventId);
+
+//     // Check if the holiday/event exists
+//     if (!holidayEvent) {
+//       return res.status(404).json({ message: "Holiday/Event not found" });
+//     }
+
+//     // Delete the event picture from Cloudinary
+//     await cloudinary.uploader.destroy(holidayEvent.event_PicturePublicId);
+
+//     // Delete the holiday/event from the database
+//     await holidayEvent.deleteOne();
+
+//     // Return a success message
+//     return res
+//       .status(200)
+//       .json({ message: "Holiday/Event deleted successfully" });
+//   } catch (error) {
+//     // Handle any errors
+//     return res
+//       .status(500)
+//       .json({ message: "Internal Server Error", error: error.message });
+//   }
+// };
 
 exports.getHomePageHeroContent = async (req, res, next) => {
   try {
