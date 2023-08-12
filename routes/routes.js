@@ -29,7 +29,7 @@ const { addService, updateService, deleteService, getServices, getServiceWithStr
 const { addStrategicExecution, updateStrategicExecution, deleteStrategicExecution, getStrategicExecution } = require('../controllers/strategicExecution');
 const { addTechnology, updateTechnology, deleteTechnology, getTechnologies} = require('../controllers/technologies');
 const { addTestimonial, updateTestimonial, deleteTestimonial, getTestimonials, updateTestimonialByid} = require('../controllers/testimonials');
-const { addContact, updateContact, deleteContact, getContact} = require('../controllers/contact');
+const { addContact, updateContact, deleteContact, getContact, userContact} = require('../controllers/contact');
 const { addPortfolioProject, updatePortfolioProject, deletePortfolioProject, getPortfolioProjects, getSinglePortfolioProject, getRelatedProjects} = require('../controllers/portprojects');
 
 
@@ -107,5 +107,5 @@ const { addPortfolioProject, updatePortfolioProject, deletePortfolioProject, get
   // router.put("/contact/", updateContact);
   router.delete("/contact/:contactId", deleteContact);
   router.get("/contact", getContact);
-
+  router.post("/contactMailer",userContact);
   module.exports = router;

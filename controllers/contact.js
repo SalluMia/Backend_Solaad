@@ -1,5 +1,5 @@
 const Contact = require("../models/contactSchema");
-
+const mailer = require('../mail/mailer');
 // Add contact details
 exports.addContact = async (req, res, next) => {
   try {
@@ -104,5 +104,19 @@ exports.getContact = async (req, res, next) => {
     return res
       .status(500)
       .json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+
+exports.userContact = async (req, res, next) => {
+  try {
+    const { name, email, subject, detail } = req.body;
+
+    await mailer.sendEmail(name, email, subject, detail);
+
+    return res.status(200).json({ message: 'Email sent successfully!' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while sending the email.' });
   }
 };
